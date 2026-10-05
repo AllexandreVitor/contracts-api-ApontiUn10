@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: contracts
       POSTGRES_PASSWORD: contracts123
     volumes:
-      - pgdata: /var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U contracts -d contracts"]
       interval: 10s
