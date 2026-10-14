@@ -34,14 +34,15 @@ jobs:
     name: 2. SAST com Semgrep
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+
+    container:
+      image: semgrep/semgrep
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
       - name: Run Semgrep
-        run: |
-          docker run --rm \
-            -v "$PWD:/src" \
-            -w /src \
-            semgrep/semgrep \
-            semgrep scan --config p/nodejs
+        run: semgrep scan --config p/nodejs
