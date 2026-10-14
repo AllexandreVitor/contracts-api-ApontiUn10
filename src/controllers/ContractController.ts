@@ -8,14 +8,33 @@ export class ContractController {
     const { title, userId, description, value } = req.body;
 
     if (!title || !userId) {
-      return res.status(400).json({ error: "Missing required fields: title, userId" });
+      return res.status(400).json({
+        error: "Missing required fields: title, userId",
+      });
     }
 
     try {
-      const contract = await this.contractService.createContract(title, userId, description, value);
-      return res.status(201).json({ message: "Contract created successfully", contract });
-    } catch (error: any) {
-      return res.status(500).json({ error: "Internal server error", details: error.message });
+      const contract = await this.contractService.createContract(
+        title,
+        userId,
+        description,
+        value
+      );
+
+      return res.status(201).json({
+        message: "Contract created successfully",
+        contract,
+      });
+    } catch (error: unknown) {
+      const details =
+        error instanceof Error
+          ? error.message
+          : "Unknown error";
+
+      return res.status(500).json({
+        error: "Internal server error",
+        details,
+      });
     }
   }
 }
