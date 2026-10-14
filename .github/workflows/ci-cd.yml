@@ -1,4 +1,4 @@
-name: DevServices CI/CD - API
+name: DevSecOps Pipeline - API
 
 on:
     push:
@@ -26,3 +26,22 @@ jobs:
         uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # =============================================
+  # 2. SAST
+  # =============================================
+  sast:
+    name: 2. SAST com Semgrep
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Run Semgrep
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" \
+            -w /src \
+            semgrep/semgrep \
+            semgrep scan --config p/nodejs
