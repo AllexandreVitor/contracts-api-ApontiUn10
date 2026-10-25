@@ -1,37 +1,132 @@
-services:
 
-  postgres:
-    image: postgres:16-alpine
-    container_name: postgres
+services:
+  # ==================================================
+  # API — Aplicação Node.js / Express
+  # ==================================================
+  api:
+    # Constrói a imagem usando o Dockerfile da raiz.
+    # O Dockerfile contém os estágios de build e produção.
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Nome do container da API.
+    container_name: contracts-api
+
+    # Reinicia o container automaticamente, exceto
+    # quando ele for parado manualmente.
     restart: unless-stopped
+
+    # Mapeia a porta da máquina para a porta do container.
+    # A API precisa escutar na porta 3000.
+    ports:
+      - "3000:3000"
+
+    # Variáveis de ambiente utilizadas pela aplicação.
+    # Dentro do Docker, usamos os nomes dos serviços
+    # como hosts, e não localhost.
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+
+      # Configurações da conexão com PostgreSQL.
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: contracts
+      DB_USER: contracts
+      DB_PASSWORD: ${DB_PASSWORD:-contracts123}
+
+      # Configurações da conexão com Redis.
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+    # Aguarda os serviços de infraestrutura ficarem saudáveis
+    # antes de iniciar a API.
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ==================================================
+  # POSTGRESQL — Banco de dados relacional
+  # ==================================================
+  postgres:
+    # Imagem oficial do PostgreSQL, versão 16,
+    # baseada na distribuição Alpine Linux.
+    image: postgres:16-alpine
+
+    # Nome do container do banco.
+    container_name: postgres
+
+    # Reinicia automaticamente, exceto se parado manualmente.
+    restart: unless-stopped
+
+    # Expõe a porta do banco na máquina host.
+    # Formato: HOST:CONTAINER.
     ports:
       - "5432:5432"
+
+    # Variáveis utilizadas na inicialização do banco.
     environment:
+      # Nome do banco criado na primeira inicialização.
       POSTGRES_DB: contracts
+
+      # Usuário inicial do banco.
       POSTGRES_USER: contracts
-      POSTGRES_PASSWORD: contracts123
+
+      # Senha inicial do usuário.
+      # Em produção, utilize um segredo seguro.
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-contracts123}
+
+    # Volume persistente para manter os dados do banco
+    # mesmo quando o container for removido.
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+    # Verifica se o PostgreSQL está aceitando conexões.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U contracts -d contracts"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  # ==================================================
+  # REDIS — Armazenamento em memória
+  # ==================================================
   redis:
+    # Imagem oficial do Redis, versão 7.
     image: redis:7-alpine
+
+    # Nome do container Redis.
     container_name: contracts-redis
+
+    # Reinicia automaticamente, exceto se parado manualmente.
     restart: unless-stopped
+
+    # Expõe a porta Redis na máquina host.
     ports:
       - "6379:6379"
+
+    # Persiste os dados do Redis no volume.
+    # A persistência efetiva depende da configuração
+    # de snapshots ou AOF do Redis.
     volumes:
       - redisdata:/data
+
+    # Verifica se o Redis responde ao comando PING.
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+# ==================================================
+# VOLUMES — Persistência dos dados
+# ==================================================
 volumes:
+  # Dados do PostgreSQL.
   pgdata:
+
+  # Arquivos de persistência do Redis.
   redisdata:
