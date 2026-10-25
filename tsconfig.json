@@ -6,13 +6,9 @@
     "outDir": "./dist",
 
     // Environment Settings
-    // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
     "types": ["node", "jest"],
-    // For nodejs:
-    // "lib": ["esnext"],
-    // and npm install -D @types/node
 
     // Other Outputs
     "sourceMap": true,
@@ -39,6 +35,12 @@
     "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
-  }
+    "skipLibCheck": true
+  },
+
+  // Compile only the API source files
+  "include": ["src/**/*.ts"],
+
+  // Exclude tests and generated files
+  "exclude": ["tests", "node_modules", "dist"]
 }
