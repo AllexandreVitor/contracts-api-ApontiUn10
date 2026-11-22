@@ -116,6 +116,28 @@ services:
     depends_on:
       - api
 
+
+  # =================================
+  # GRAFANA — Visualização de métricas
+  # =================================
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+
+    ports:
+      - "3001:3000"
+
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Defina GRAFANA_ADMIN_PASSWORD no .env}
+
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+
+    depends_on:
+      - prometheus
+
 # ==================================================
 # VOLUMES — Persistência dos dados
 # ==================================================
@@ -125,3 +147,6 @@ volumes:
 
   # Dados persistidos pelo Redis.
   redisdata:
+
+  # Dados persistidos para o Grafana.
+  grafana_data:
