@@ -9,9 +9,6 @@ services:
       context: .
       dockerfile: Dockerfile
 
-    # Nome do container.
-    container_name: contracts-api
-
     # Reinicia automaticamente, exceto quando parado manualmente.
     restart: unless-stopped
 
@@ -50,9 +47,6 @@ services:
   postgres:
     # Imagem oficial do PostgreSQL.
     image: postgres:16-alpine
-
-    # Nome do container.
-    container_name: postgres
 
     # Política de reinicialização.
     restart: unless-stopped
