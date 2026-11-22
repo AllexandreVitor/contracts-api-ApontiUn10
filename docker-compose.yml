@@ -51,10 +51,6 @@ services:
     # Política de reinicialização.
     restart: unless-stopped
 
-    # Expõe a porta do banco para a máquina host.
-    ports:
-      - "${DB_PORT:-5432}:5432"
-
     # Credenciais e banco inicial obtidos do .env.
     environment:
       POSTGRES_DB: ${DB_NAME}
@@ -81,15 +77,8 @@ services:
     # Imagem oficial do Redis.
     image: redis:7-alpine
 
-    # Nome do container.
-    container_name: contracts-redis
-
     # Política de reinicialização.
     restart: unless-stopped
-
-    # Expõe a porta Redis para a máquina host.
-    ports:
-      - "${REDIS_PORT}:6379"
 
     # Persiste os arquivos de dados no volume.
     # A persistência depende da configuração do Redis.
