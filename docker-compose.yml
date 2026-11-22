@@ -92,6 +92,30 @@ services:
       timeout: 5s
       retries: 5
 
+  # =================================
+  # PROMETHEUS — Coleta de métricas
+  # =================================
+  prometheus:
+    # Imagem oficial do Prometheus.
+    image: prom/prometheus:latest
+
+    # Política de reinicialização.
+    restart: unless-stopped
+
+    # Expõe a interface web do Prometheus.
+    ports:
+      - "9090:9090"
+
+    # Monta a configuração criada anteriormente.
+    # O arquivo fica somente leitura dentro do container.
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+    # Inicia depois da API.
+    # Isso define a ordem de inicialização, não a saúde da API.
+    depends_on:
+      - api
+
 # ==================================================
 # VOLUMES — Persistência dos dados
 # ==================================================
