@@ -28,7 +28,8 @@ ENV NODE_ENV=production
 COPY package.json package-lock.json ./
 
 # Instala somente as dependências de produção
-RUN npm ci --omit=dev
+# e concede ao usuário node acesso aos arquivos da aplicação.
+RUN npm ci --omit=dev && chown -R node:node /app
 
 # Copia o JavaScript compilado do primeiro estágio
 COPY --from=build /app/dist ./dist
