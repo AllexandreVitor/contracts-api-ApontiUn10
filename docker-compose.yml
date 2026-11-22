@@ -17,12 +17,12 @@ services:
 
     # Mapeia a porta da máquina para a porta do container.
     ports:
-      - "${PORT}:3000"
+      - "${PORT:-3000}:3000"
 
     # Variáveis de ambiente recebidas pela aplicação.
     environment:
       NODE_ENV: production
-      PORT: ${PORT}
+      PORT: 3000
 
       # Conexão com PostgreSQL.
       # "postgres" é o nome do serviço no Docker Compose.
