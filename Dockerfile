@@ -31,8 +31,11 @@ COPY package.json package-lock.json ./
 # e concede ao usuário node acesso aos arquivos da aplicação.
 RUN npm ci --omit=dev && chown -R node:node /app
 
-# Copia o JavaScript compilado do primeiro estágio
-COPY --from=build /app/dist ./dist
+# Copia o JavaScript compilado com o usuário node como proprietário.
+COPY --from=build --chown=node:node /app/dist ./dist
+
+# Executa a aplicação sem privilégios de root.
+USER node
 
 EXPOSE 3000
 
