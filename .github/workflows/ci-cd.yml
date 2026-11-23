@@ -89,6 +89,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Validar Docker Compose
+        env:
+          GRAFANA_ADMIN_PASSWORD: ci-validation-password
+        run: docker compose config --quiet
+
       - name: Build Docker image
         run: docker build -t contratos-api:${{ github.sha}} .
       
