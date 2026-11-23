@@ -74,7 +74,7 @@ jobs:
         run: npm run lint
 
   # =============================================
-  # 4. Build da imagem Docker
+  # 4. Build and Push da imagem Docker
   # =============================================
   docker-build:
     name: 4. Build da imagem Docker
@@ -106,3 +106,19 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'HIGH,CRITICAL'
+
+      - name: Login no Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Publicar imagem no Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker tag contratos-api:${{ github.sha }} allexandrevitor/contratos-api-aponti-un10:${{ github.sha }}
+          docker tag contratos-api:${{ github.sha }} allexandrevitor/contratos-api-aponti-un10:latest
+
+          docker push allexandrevitor/contratos-api-aponti-un10:${{ github.sha }}
+          docker push allexandrevitor/contratos-api-aponti-un10:latest
