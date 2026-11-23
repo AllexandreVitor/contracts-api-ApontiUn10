@@ -91,3 +91,13 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t contratos-api:${{ github.sha}} .
+      
+      - name: Scan da imagem Docker com Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'contratos-api:${{ github.sha }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'HIGH,CRITICAL'
