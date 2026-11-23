@@ -110,6 +110,7 @@ services:
     # O arquivo fica somente leitura dentro do container.
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
 
     # Inicia depois da API.
     # Isso define a ordem de inicialização, não a saúde da API.
@@ -150,3 +151,6 @@ volumes:
 
   # Dados persistidos para o Grafana.
   grafana_data:
+
+  # Dados persistidos para o Prometheus.
+  prometheus_data:
