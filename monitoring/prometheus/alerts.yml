@@ -1,0 +1,11 @@
+groups:
+  - name: contratos-api-alerts
+    rules:
+      - alert: ContratosApiDown
+        expr: up{job="contratos-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "API de contratos indisponível"
+          description: "O Prometheus não consegue coletar métricas da API há mais de 1 minuto."
